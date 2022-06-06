@@ -3,6 +3,7 @@ package org.nd.services.operations;
 import org.nd.exceptions.NotFoundException;
 import org.nd.managers.CachesManager;
 import org.nd.services.fs.FsService;
+import org.nd.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +41,7 @@ public class PartialUpdate {
 	    }else {
 		    return Mono.just(jsonObject) 
 			    .map(mainDoc -> JsonMerge.merge(partialJson.toString(), mainDoc.toString()))
-			    .map(mergeOutput -> (JSONObject) JSONValue.parse(mergeOutput))
+			    .map(mergeOutput -> Utils.parseOrNull(mergeOutput))
 			    .flatMap(mergedDoc -> fsService.saveToFs(mergedDoc, systemId,  "update"));
 	    }
 	    

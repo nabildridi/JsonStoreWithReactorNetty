@@ -103,7 +103,7 @@ public class ServerService {
 		    .aggregate()
 		    .asString()
 		    .flatMap(jsonStr -> {
-                		JSONObject query = Try.of(() -> (JSONObject) JSONValue.parse(jsonStr)).getOrNull();
+                		JSONObject query = Try.of(() -> Utils.parse(jsonStr)).getOrNull();
                 		if (query != null) {
                 		    return Mono.just(query);
                 		} else {
@@ -123,7 +123,7 @@ public class ServerService {
 	return (req, res) -> {
 
 	    return req.receive().aggregate().asString().flatMap(jsonStr -> {
-		JSONObject query = Try.of(() -> (JSONObject) JSONValue.parse(jsonStr)).getOrNull();
+		JSONObject query = Try.of(() -> Utils.parse(jsonStr)).getOrNull();
 		if (query != null) {
 		    return Mono.just(query);
 		} else {
@@ -142,7 +142,7 @@ public class ServerService {
 	return (req, res) -> {
 
 	    return req.receive().aggregate().asString().flatMap(jsonStr -> {
-		JSONObject query = Try.of(() -> (JSONObject) JSONValue.parse(jsonStr)).getOrNull();
+		JSONObject query = Try.of(() -> Utils.parse(jsonStr)).getOrNull();
 		if (query != null) {
 		    return Mono.just(query);
 		} else {
@@ -168,7 +168,7 @@ public class ServerService {
 		
 	    } else {
 		return req.receive().aggregate().asString().flatMap(jsonStr -> {
-		    JSONObject jsonToDelete = Try.of(() -> (JSONObject) JSONValue.parse(jsonStr)).getOrNull();
+		    JSONObject jsonToDelete = Try.of(() -> Utils.parse(jsonStr)).getOrNull();
 		    if (jsonToDelete == null) {
 			return Mono.error(new ParsingException());
 		    } else {

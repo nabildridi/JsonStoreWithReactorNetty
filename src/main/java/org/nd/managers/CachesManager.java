@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Map;
 
+import org.nd.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,7 +13,6 @@ import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.github.wnameless.json.flattener.JsonFlattener;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
 
@@ -85,11 +85,7 @@ public class CachesManager {
 	}
 
 	private JSONObject getJsonObject(String id) {
-		try {
-			return  (JSONObject) JSONValue.parse(fileCache.get(id));
-		} catch (Exception e) {
-			return null;
-		}
+		return Utils.parseOrNull(fileCache.get(id));
 	}
 
 	private ReadContext getReadContext(String id) {

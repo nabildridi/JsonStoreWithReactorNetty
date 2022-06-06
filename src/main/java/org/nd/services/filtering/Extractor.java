@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import org.nd.managers.CachesManager;
 import org.nd.rx.JsonObjectsListReducer;
+import org.nd.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,7 +65,7 @@ public class Extractor {
 			    }
 			    output.put("_systemId", systemId);
 			    String outputJson = JsonUnflattener.unflatten(output);
-			    Optional<JSONObject> extractResult = Optional.of((JSONObject) JSONValue.parse(outputJson));
+			    Optional<JSONObject> extractResult = Optional.of(Utils.parseOrNull(outputJson));
 			    return extractResult;
 
 			})
@@ -102,7 +103,7 @@ public class Extractor {
 			    }
 			    output.put("_systemId", systemId);
 			    String outputJson = JsonUnflattener.unflatten(output);
-			   JSONObject extractResult = (JSONObject) JSONValue.parse(outputJson);
+			   JSONObject extractResult = Utils.parseOrNull(outputJson);
 			    return extractResult;
 
 			});

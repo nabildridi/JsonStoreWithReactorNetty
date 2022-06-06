@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
+import org.nd.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,11 +24,12 @@ public class ConfigurationManager {
     public void init() {
 
 	InputStream is = getClass().getClassLoader().getResourceAsStream("conf/config.json");
-	String content = "{}";
+	jsonConfig =new JSONObject();
 	try {
-	    content = new String(is.readAllBytes(), StandardCharsets.UTF_8);
-	} catch (IOException e) {}
-	jsonConfig = (JSONObject) JSONValue.parse(content);
+	    String content = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+	    jsonConfig = Utils.parse(content);
+	} catch (Exception e) {}
+	
 
     }
     // -----------------------------------------------------------------------------------------------------------------------------------------

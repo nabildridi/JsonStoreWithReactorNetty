@@ -44,7 +44,7 @@ public class Query {
 
 	public Mono<JSONObject> execute(JSONObject  jsonQuery) {
 
-			QueryHolder queryHolder =JSONValue.parse(jsonQuery.toJSONString(), QueryHolder.class);
+			QueryHolder queryHolder =Utils.mapTo(jsonQuery.toJSONString(), QueryHolder.class);
 			
 			CopyOnWriteArrayList<String> filesIndex = kvDatabaseManager.getFileIndex();
 			
