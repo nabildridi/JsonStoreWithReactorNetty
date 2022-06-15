@@ -9,8 +9,6 @@ import net.minidev.json.parser.JSONParser;
 import net.minidev.json.parser.ParseException;
 
 public class Utils {
-
-    	private static JSONParser jsonParser = new JSONParser(JSONParser.MODE_PERMISSIVE);
     
     
 	public static boolean notNullAndNotEmpty(String value) {
@@ -30,23 +28,23 @@ public class Utils {
 	    return sourceList.subList(fromIndex, Math.min(fromIndex + pageSize, sourceList.size()));
 	}
 	
-	public static JSONObject parse(String s) throws ParseException {	
+	public static JSONObject parse(String s) throws Exception {	
 	    
-	    return (JSONObject) jsonParser.parse(s);
+	    return (JSONObject) new JSONParser(JSONParser.MODE_PERMISSIVE).parse(s);
 		
 	}
 	
 	public static JSONObject parseOrNull(String s) {	    
 	    try {
-		return (JSONObject) jsonParser.parse(s);
-	    } catch (ParseException e) {
+		return (JSONObject) new JSONParser(JSONParser.MODE_PERMISSIVE).parse(s);
+	    } catch (Exception e) {
 		return null;
 	    }		
 	}
 	
 	public static <T> T mapTo(String s, Class<T> mapTo)  {	    
 	    try {
-		return jsonParser.parse(s, mapTo);
+		return new JSONParser(JSONParser.MODE_PERMISSIVE).parse(s, mapTo);
 	    } catch (ParseException e) {
 		try {
 		    return mapTo.getDeclaredConstructor().newInstance();

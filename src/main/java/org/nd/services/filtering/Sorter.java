@@ -2,7 +2,6 @@ package org.nd.services.filtering;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 import org.nd.dto.QueryHolder;
 import org.nd.managers.CachesManager;
@@ -25,7 +24,7 @@ public class Sorter {
     private static Logger logger = LoggerFactory.getLogger(Sorter.class);
 	
 	@Inject
-	private CachesManager cachesManger;
+	private CachesManager cachesManager;
 	
 
 
@@ -45,14 +44,12 @@ public class Sorter {
 	    .fromIterable(inputKeysArray)
 	    .parallel()
 	        .runOn(Schedulers.parallel())
-	        .map(systemId -> Tuple.of(cachesManger.flattenFromCache(systemId), systemId))
-		    .map(pair -> {			
+		    .map(systemId -> {			
 			
-			Map<String, Object> flattenJson = pair._1();
-			Object o = flattenJson.get(queryHolder.getSortField());
+			Object o = cachesManager.flattenFromCache(systemId).get(queryHolder.getSortField());
 			String result = "";
 			if(o != null) result =String.valueOf( o );		
-			return Tuple.of(pair._2(), result); 
+			return Tuple.of(systemId, result); 
 			
 		    })	
 		    .sequential()

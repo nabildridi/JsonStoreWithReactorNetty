@@ -18,9 +18,9 @@ import com.google.inject.Singleton;
 
 import io.vavr.Tuple;
 import net.minidev.json.JSONObject;
-import net.minidev.json.JSONValue;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 
 
@@ -50,12 +50,12 @@ public class Extractor {
 
 	   return  Flux
 		   .fromIterable(jsonsList)
-		.map(json -> json.getAsString("_systemId"))
-			.map(systemId -> Tuple.of(cachesManager.flattenFromCache(systemId), systemId))
-			.map(pair -> {
-
-			    String systemId = pair._2();
-			    Map<String, Object> flattenJson = pair._1();
+		   .parallel()
+		        .runOn(Schedulers.parallel())
+			.map(json -> {
+			    
+			    String systemId = json.getAsString("_systemId");
+			    Map<String, Object> flattenJson =cachesManager.flattenFromCache(systemId);
 			    Map<String, Object> output = new HashMap<String, Object>();
 
 			    for (String frName : fragmentsNames) {
@@ -65,10 +65,11 @@ public class Extractor {
 			    }
 			    output.put("_systemId", systemId);
 			    String outputJson = JsonUnflattener.unflatten(output);
-			    Optional<JSONObject> extractResult = Optional.of(Utils.parseOrNull(outputJson));
+			    Optional<JSONObject> extractResult = Optional.ofNullable(Utils.parseOrNull(outputJson));
 			    return extractResult;
 
 			})
+			.sequential()
 			.reduce(result, new JsonObjectsListReducer());
 
     }

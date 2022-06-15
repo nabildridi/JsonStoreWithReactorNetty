@@ -13,7 +13,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.jayway.jsonpath.JsonPath;
 
-import io.vavr.Tuple;
 import io.vavr.control.Try;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -24,7 +23,7 @@ public class Filter {
     private static Logger logger = LoggerFactory.getLogger(Filter.class);
     
 	@Inject
-	private CachesManager cachesManger;
+	private CachesManager cachesManager;
 
 
     public Mono<List<String>> execute(List<String> unfilteredKeysArray, String JsonPathQuery) {
@@ -38,25 +37,24 @@ public class Filter {
 	    .fromIterable(unfilteredKeysArray)
 	    .parallel()
 	        .runOn(Schedulers.parallel())
-		    .map(systemId -> Tuple.of(cachesManger.readContextFromCache(systemId), systemId))
-		    .map(pair -> {
+		    .map(systemId -> {
 
-			Object results = Try.of(() -> pair._1().read(jsonPath)).getOrNull();
+			Object results = Try.of(() -> (cachesManager.readContextFromCache(systemId).read(jsonPath))).getOrNull();
 			Optional<String> jsonPathResult = Optional.empty();
 			if (results != null) {
 			    if (results instanceof List) {
 				if (!((List) results).isEmpty()) {
-				    jsonPathResult = Optional.of(pair._2());
+				    jsonPathResult = Optional.of(systemId);
 				}
 			    } else {
-				jsonPathResult = Optional.of(pair._2());
+				jsonPathResult = Optional.of(systemId);
 			    }
 			}
 			return jsonPathResult;
 
-		    })
-		    .filter(item -> item.isPresent())
+		    })		   
 		    .sequential()
+		    .filter(item -> item.isPresent())
 		    .reduce(result, new StringArrayReducer());
 
 
